@@ -1,12 +1,14 @@
 
 ClassicEditor.create(document.querySelector("#myeditor"), {
     removePlugins: ["Heading"],
-    toolbar: ["italic", "link", "bold"], // Include 'bold' in the toolbar configuration
+    toolbar: ["italic", "link", "bold"], // Include 'bold', 'italic', and 'link' in the toolbar configuration
 })
     .then((newEditor) => {
         editor = newEditor;
-        editor.editing.view.document.documentNode.style.color = "white";
 
+        // Set the CKEditor text color explicitly
+        const editorDocument = newEditor.ui.getEditableElement().parentElement;
+        editorDocument.style.color = "white";
     })
     .catch((error) => {
         console.log(error);
