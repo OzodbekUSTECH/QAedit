@@ -17,7 +17,7 @@ textarea{
     padding:20px;
     font-size: 20px;
     resize: none;
-    color:var(--tg-theme-text-color);
+    color: black;
 }
  
 #main{
@@ -90,3 +90,7 @@ button:active{
     border-radius: 30px;
     font-size: 20px;
 }
+
+.ck-content {
+    color: #ffffff; /* Replace with a suitable color that works well in dark mode */
+  }
