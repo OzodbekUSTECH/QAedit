@@ -1,20 +1,16 @@
+CKEDITOR.replace('myeditor', {
+    // Define the toolbar groups as it is a more accessible solution.
+    toolbarGroups: [
+        { name: 'links', groups: ['links'] },
+        { name: 'basicstyles', groups: ['basicstyles'] }, // Include basicstyles group
+    ],
+    enterMode: CKEDITOR.ENTER_BR,
+    // Remove the redundant buttons from toolbar groups defined above.
+    removeButtons: 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord, Body'
+});
 let tg = window.Telegram.WebApp;
 
 
-ClassicEditor.create(document.querySelector("#myeditor"), {
-    removePlugins: ["Heading"],
-    toolbar: ["italic", "link", "bold"], // Include 'bold', 'italic', and 'link' in the toolbar configuration
-})
-    .then((newEditor) => {
-        editor = newEditor;
-
-        // Set the CKEditor text color explicitly
-        const editorDocument = newEditor.ui.getEditableElement().parentElement;
-        editorDocument.style.color = "white";
-    })
-    .catch((error) => {
-        console.log(error);
-    });
 
 
 function setQuestionIdInURL(questionId) {
@@ -47,9 +43,7 @@ function fetchAllGroups() {
         .catch((error) => console.error("Error fetching groups data:", error));
 }
 
-// Function to fetch data from an API and populate the form fields
-let editor; // Declare the editor variable outside the fetchQuestionData function
-
+// // Function to fetch data from an API and populate the form fields
 function fetchQuestionData() {
     const questionApiUrl = `https://gazoblok-bukhara.uz/question/${questionId}`;
     fetch(questionApiUrl)
@@ -60,23 +54,27 @@ function fetchQuestionData() {
             // Replace \n with <br> tags for new lines
             const formattedAnswer = questionData.answer.replace(/\n/g, "<br>");
 
-            if (!editor) {
-                // Initialize CKEditor with custom configuration on the "myeditor" textarea only if editor is not already initialized
-                ClassicEditor.create(document.querySelector("#myeditor"), {
-                    removePlugins: ["Heading"],
-                    toolbar: ["italic", "link", "bold"], // Include 'bold', 'italic', and 'link' in the toolbar configuration
-                })
-                    .then((newEditor) => {
-                        editor = newEditor;
-                        editor.setData(formattedAnswer); // Set the content of CKEditor with formatted answer
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            } else {
-                // If editor is already initialized, set the content of CKEditor with formatted answer
-                editor.setData(formattedAnswer);
+            // Replace regular spaces with &nbsp;
+            const spaceFormattedAnswer = formattedAnswer.replace(/ /g, "&nbsp;");
+
+            // Destroy the existing editor instance, if any, before initializing CKEditor
+            if (CKEDITOR.instances.myeditor) {
+                CKEDITOR.instances.myeditor.destroy();
             }
+
+            // Initialize CKEditor with custom configuration on the "myeditor" textarea
+            CKEDITOR.replace("myeditor", {
+                toolbarGroups: [
+                    { name: "links", groups: ["links"] },
+                    { name: "basicstyles", groups: ["basicstyles"] }, // Include basicstyles group
+                ],
+                enterMode: CKEDITOR.ENTER_BR,
+                removeButtons:
+                    "Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord, Body",
+            });
+
+            // Set the content of CKEditor with formatted answer
+            CKEDITOR.instances.myeditor.setData(spaceFormattedAnswer);
 
             // Set the selected group based on the group_id of the question
             document.getElementById("selectOption").value = questionData.group_id;
@@ -84,21 +82,21 @@ function fetchQuestionData() {
         .catch((error) => console.error("Error fetching question data:", error));
 }
 
-
-
-
-function formatContentForEditor(content) {
-    // Remove <p> tags from the content
-    const withoutPTags = content.replace(/<p[^>]*>/g, "").replace(/<\/p>/g, "");
-    // Replace <br> tags with \n
-    const formattedContent = withoutPTags.replace(/<br>/g, "\n");
-    return formattedContent;
-}
 function updateQuestion() {
     const questionApiUrl = `https://gazoblok-bukhara.uz/question/${questionId}`;
+
+    // Retrieve the formatted content from CKEditor
+    const formattedAnswer = CKEDITOR.instances.myeditor.getData();
+
+    // Replace <br />\n with \n
+    const newLineFormattedAnswer = formattedAnswer.replace(/<br\s*\/?>\n/g, "\n");
+
+    // Replace &nbsp; with regular spaces
+    const spaceFormattedAnswer = newLineFormattedAnswer.replace(/&nbsp;/g, " ");
+
     const formData = {
         question: document.getElementById("emailInput").value,
-        answer: formatContentForEditor(editor.getData()).replace(/&nbsp;/g, " "), // Format CKEditor's content without <p> tags
+        answer: spaceFormattedAnswer,
         group_id: document.getElementById("selectOption").value,
     };
 
@@ -124,12 +122,7 @@ function updateQuestion() {
 
 
 
-// Populate the form fields with data on page load
-if (questionId) {
-    fetchAllGroups();
-    fetchQuestionData();
-}
-// Add event listener to the "Отправить" (Submit) button
+
 document.getElementById("submitBtn").addEventListener("click", updateQuestion);
 
 
@@ -159,6 +152,4 @@ function deleteQuestion() {
 
 
 
-
-
-
+fetchAllGroups();
