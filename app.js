@@ -5,6 +5,8 @@ ClassicEditor.create(document.querySelector("#myeditor"), {
 })
     .then((newEditor) => {
         editor = newEditor;
+        editor.editing.view.document.documentNode.style.color = "white";
+
     })
     .catch((error) => {
         console.log(error);
