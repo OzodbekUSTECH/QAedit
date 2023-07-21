@@ -92,7 +92,7 @@ function updateQuestion() {
     const questionApiUrl = `https://gazoblok-bukhara.uz/question/${questionId}`;
     const formData = {
         question: document.getElementById("emailInput").value,
-        answer: formatContentForEditor(editor.getData()), // Format CKEditor's content without <p> tags
+        answer: formatContentForEditor(editor.getData()).replace(/&nbsp;/g, " "), // Format CKEditor's content without <p> tags
         group_id: document.getElementById("selectOption").value,
     };
 
