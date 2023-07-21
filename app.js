@@ -137,22 +137,28 @@ document.getElementById("submitBtn").addEventListener("click", updateQuestion);
 document.getElementById("deleteBtn").addEventListener("click", deleteQuestion);
 
 function deleteQuestion() {
-  // Check if the question has an ID before making the API call
-  if (questionId) {
-    const questionApiUrl = `https://gazoblok-bukhara.uz/question/${questionId}`;
-    fetch(questionApiUrl, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response as needed
-        console.log("Question deleted:", data);
-        tg.close();
-        // After successfully deleting the question, you can redirect the user or perform other actions if required.
-        // For example, you can redirect the user to a new page or update the UI accordingly.
-      })
-      .catch((error) => console.error("Error deleting question:", error));
-  } else {
-    console.error("Question ID not found. Cannot delete the question.");
-  }
+    // Check if the question has an ID before making the API call
+    if (questionId) {
+        const questionApiUrl = `https://gazoblok-bukhara.uz/question/${questionId}`;
+        fetch(questionApiUrl, {
+            method: "DELETE",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Handle the response as needed
+                console.log("Question deleted:", data);
+                tg.close();
+                // After successfully deleting the question, you can redirect the user or perform other actions if required.
+                // For example, you can redirect the user to a new page or update the UI accordingly.
+            })
+            .catch((error) => console.error("Error deleting question:", error));
+    } else {
+        console.error("Question ID not found. Cannot delete the question.");
+    }
 }
+
+
+
+
+
+
