@@ -147,27 +147,27 @@ const createGroup = (groupNameInput) => {
             'Content-Type': 'application/json', // Use Content-Type for sending JSON data
         },
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Ответ сервера:', data);
+        .then(response => response.json())
+        .then(data => {
+            console.log('Ответ сервера:', data);
 
-        // Add the new group name as an option to the select element
-        const selectOption = document.getElementById("theme");
-        const option = document.createElement("option");
-        option.value = data.id; // Use the ID of the newly created group
-        option.textContent = data.name; // Use the name of the newly created group
-        selectOption.appendChild(option);
+            // Add the new group name as an option to the select element
+            const selectOption = document.getElementById("theme");
+            const option = document.createElement("option");
+            option.value = data.id; // Use the ID of the newly created group
+            option.textContent = data.name; // Use the name of the newly created group
+            selectOption.appendChild(option);
 
-        // Reset the flag after creating the group
-        isCreating = false;
+            // Reset the flag after creating the group
+            isCreating = false;
 
-        const popup = document.querySelector('.popup');
-        popup.style.display = 'none';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        isCreating = false; // Reset the flag in case of an error
-    });
+            const popup = document.querySelector('.popup');
+            popup.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            isCreating = false; // Reset the flag in case of an error
+        });
 };
 
 const createButton = document.getElementById('createButton');
@@ -184,3 +184,120 @@ const openpopup = (event) => {
 
 const button = document.querySelector('.button');
 button.addEventListener('click', openpopup);
+
+const displayGroupsPopup = () => {
+    const groupListPopupContainer = document.getElementById("groupListPopup");
+
+    fetch("https://gazoblok-bukhara.uz/groups")
+        .then((response) => response.json())
+        .then((data) => {
+            // Clear the existing content in the groupListPopupContainer
+            groupListPopupContainer.innerHTML = "";
+
+            // Loop through the groups and create checkboxes for each
+            data.forEach((group) => {
+                const groupDiv = document.createElement("div");
+                groupDiv.classList.add("form-check");
+                groupDiv.innerHTML = `
+                    <input class="form-check-input" type="checkbox" value="${group.id}" id="groupPopup${group.id}">
+                    <label class="form-check-label" for="groupPopup${group.id}">
+                        ${group.name}
+                    </label>
+                `;
+                groupListPopupContainer.appendChild(groupDiv);
+            });
+        })
+        .catch((error) => console.error("Error:", error));
+};
+
+// Event listener for the "Редактировать группы" button click
+document.getElementById("editGroupsButton").addEventListener("click", (event) => {
+    event.preventDefault();
+    const editGroupsPopup = document.getElementById("editGroupsPopup");
+    editGroupsPopup.style.display = "block";
+
+    // Display existing groups with checkboxes in the popup
+    displayGroupsPopup();
+});
+
+// Event listener for the "Удалить выбранные группы" button click in the popup
+document.getElementById("deleteSelectedGroupsButton").addEventListener("click", (event) => {
+    event.preventDefault();
+    deleteSelectedGroupsPopup();
+});
+
+// Function to delete selected groups from the popup
+const deleteSelectedGroupsPopup = () => {
+    const selectedGroupsPopup = Array.from(document.querySelectorAll(".form-check-input:checked"))
+        .map((checkbox) => parseInt(checkbox.value));
+
+    if (selectedGroupsPopup.length === 0) {
+        alert("Please select at least one group to delete.");
+        return;
+    }
+
+    const apiUrl = "https://gazoblok-bukhara.uz/group/";
+
+    Promise.all(
+        selectedGroupsPopup.map((groupId) =>
+            fetch(apiUrl + groupId, {
+                method: "DELETE",
+            })
+        )
+    )
+        .then(() => {
+            // Refresh the group list after deletion
+            displayGroupsPopup();
+            displayGroups(); // Refresh the main group list
+        })
+        .catch((error) => console.error("Error:", error));
+};
+
+// Event listener for the "Закрыть" button click in the popup
+document.getElementById("closeButtonPopup").addEventListener("click", (event) => {
+    event.preventDefault();
+    const editGroupsPopup = document.getElementById("editGroupsPopup");
+    editGroupsPopup.style.display = "none";
+});
+
+
+document.getElementById("updateGroupNameButton").addEventListener("click", (event) => {
+    event.preventDefault();
+    updateGroupName();
+});
+
+// Function to update the group name through the API
+const updateGroupName = () => {
+    const selectedGroupsPopup = Array.from(document.querySelectorAll(".form-check-input:checked"))
+        .map((checkbox) => parseInt(checkbox.value));
+
+    if (selectedGroupsPopup.length === 0) {
+        alert("Please select at least one group to update the name.");
+        return;
+    }
+
+    const newGroupName = document.getElementById("newGroupName").value;
+
+    if (!newGroupName) {
+        alert("Please enter the new group name.");
+        return;
+    }
+
+    const apiUrl = "https://gazoblok-bukhara.uz/group/";
+
+    Promise.all(
+        selectedGroupsPopup.map((groupId) =>
+            fetch(apiUrl + groupId + "?name=" + encodeURIComponent(newGroupName), {
+                method: "PUT",
+            })
+        )
+    )
+        .then(() => {
+            // Refresh the group list after updating the name
+            displayGroupsPopup();
+            displayGroups(); // Refresh the main group list
+            document.getElementById("newGroupName").value = ""; // Clear the input field after updating
+        })
+        .catch((error) => console.error("Error:", error));
+};
+

@@ -88,8 +88,40 @@
 
                     }
                 </style>
+               
             </div>
+            
         </form>
+        <div>
+            <button class="btn btn-outline-primary button" style="width: 100%; font-size: 24px" id="editGroupsButton">
+                Редактировать группы
+            </button>
+        </div>
+        
+        <!-- Add a new popup for editing groups -->
+        <div class="popup" id="editGroupsPopup">
+            <div class="popup-content">
+                <h2>Редактировать группы</h2>
+                <br>
+                <form>
+                    <div id="groupListPopup">
+                        <!-- Groups with editable names will be dynamically added here -->
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-outline-danger" style="width: 100%;" id="deleteSelectedGroupsButton">
+                        Удалить выбранные группы
+                    </button>
+                    <div>
+                        <label for="newGroupName">Новое имя группы:</label>
+                        <input type="text" id="newGroupName" placeholder="Введите новое имя">
+                        <button type="button" class="btn btn-outline-primary" id="updateGroupNameButton">Обновить имя группы</button>
+                    </div>
+                </form>
+                <button class="close-button btn btn-outline-danger" style="width: 100%;" id="closeButtonPopup">Закрыть</button>
+            </div>
+        </div>
+
+
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -102,6 +134,9 @@
         crossorigin="anonymous"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.ckeditor.com/4.22.1/standard-all/ckeditor.js"></script>
-
     <script src="bscreate.js"></script>
+   
+
 </body>
+
+</html>
