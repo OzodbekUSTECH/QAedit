@@ -117,68 +117,70 @@ document.getElementById("sendData").addEventListener("click", submitData);
 
 
 
-const openpopup = (event) => {
-    event.preventDefault();
-    let popup = document.querySelector('.popup');
-    let closeButton = document.querySelector('.close-button');
-    popup.style.display = 'block';
+let isCreating = false; // Flag to track if a group is currently being created
 
-    closeButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        popup.style.display = 'none';
-    });
+const closeButton = document.getElementById('closeButton');
+closeButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'none';
+});
+
+const createGroup = (groupNameInput) => {
+    if (isCreating) {
+        return; // If a group is already being created, do not send another request
+    }
+
+    isCreating = true; // Set the flag to indicate that a group is being created
 
     const apiUrl = 'https://gazoblok-bukhara.uz/group';
 
-    const createGroup = (groupNameInput) => {
-        const createButton = document.getElementById('createButton');
-        createButton.disabled = true; // Disable the button to prevent multiple clicks
+    // Encode the group name to ensure it is properly formatted for URL
+    const encodedGroupName = encodeURIComponent(groupNameInput);
 
-        // Encode the group name to ensure it is properly formatted for URL
-        const encodedGroupName = encodeURIComponent(groupNameInput);
+    // Construct the URL with the "name" query parameter
+    const urlWithParams = `${apiUrl}?name=${encodedGroupName}`;
 
-        // Construct the URL with the "name" query parameter
-        const urlWithParams = `${apiUrl}?name=${encodedGroupName}`;
+    fetch(urlWithParams, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json', // Use Content-Type for sending JSON data
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Ответ сервера:', data);
 
-        fetch(urlWithParams, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Use Content-Type for sending JSON data
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Ответ сервера:', data);
+        // Add the new group name as an option to the select element
+        const selectOption = document.getElementById("theme");
+        const option = document.createElement("option");
+        option.value = data.id; // Use the ID of the newly created group
+        option.textContent = data.name; // Use the name of the newly created group
+        selectOption.appendChild(option);
 
-                // Add the new group name as an option to the select element
-                const selectOption = document.getElementById("theme");
-                const option = document.createElement("option");
-                option.value = data.id; // Use the ID of the newly created group
-                option.textContent = data.name; // Use the name of the newly created group
-                selectOption.appendChild(option);
+        // Reset the flag after creating the group
+        isCreating = false;
 
-                // Enable the button after group creation is complete
-                createButton.disabled = false;
-
-                // Close the popup after creating the group
-                let popup = document.querySelector('.popup');
-                popup.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                createButton.disabled = false; // Enable the button in case of an error
-            });
-    };
-
-    // Event handler for the "Создать" button inside the popup
-    const createButton = document.getElementById('createButton');
-    createButton.addEventListener('click', () => {
-        const groupNameInput = document.getElementById('groupNameInput').value;
-        createGroup(groupNameInput);
+        const popup = document.querySelector('.popup');
+        popup.style.display = 'none';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        isCreating = false; // Reset the flag in case of an error
     });
 };
 
-let button = document.querySelector('.button');
+const createButton = document.getElementById('createButton');
+createButton.addEventListener('click', () => {
+    const groupNameInput = document.getElementById('groupNameInput').value;
+    createGroup(groupNameInput);
+});
+
+const openpopup = (event) => {
+    event.preventDefault();
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'block';
+};
+
+const button = document.querySelector('.button');
 button.addEventListener('click', openpopup);
-
-
