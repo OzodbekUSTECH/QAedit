@@ -29,6 +29,7 @@
                 <label for="theme" style="font-weight: bold">Выберите тематику :</label>
                 <select class="form-control form-control-lg" id="theme"></select>
             </div>
+            <div id="message"></div>
             <div>
                 <button type="button" id="sendData" class="btn btn-outline-success"
                     style="width: 100%; font-size: 24px">
@@ -38,7 +39,7 @@
                 <button class="btn btn-outline-info button" style="width: 100%; font-size: 24px">
                     Создать группу
                 </button>
-                
+
                 <div class="popup">
                     <div class="popup-content">
                         <h2>Создать группу</h2>
@@ -47,9 +48,11 @@
                             <input type="text" placeholder="Название группы" class="form-control" id="groupNameInput"
                                 style="height: 70px; font-size: 20px;">
                             <br>
-                            <button type="button" class="btn btn-outline-success" style="width: 100%;" id="createButton">Создать</button>
+                            <button type="button" class="btn btn-outline-success" style="width: 100%;"
+                                id="createButton">Создать</button>
                         </form>
-                        <button class="close-button btn btn-outline-danger" style="width: 100%;" id="closeButton">Закрыть</button>
+                        <button class="close-button btn btn-outline-danger" style="width: 100%;"
+                            id="closeButton">Закрыть</button>
                     </div>
                 </div>
                 <style>
