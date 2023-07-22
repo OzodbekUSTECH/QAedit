@@ -6,7 +6,15 @@ CKEDITOR.replace('answer', {
     ],
     enterMode: CKEDITOR.ENTER_BR,
     // Remove the redundant buttons from toolbar groups defined above.
-    removeButtons: 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord, Body'
+    removeButtons: 'Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord, Body',
+    extraPlugins: 'editorplaceholder',
+    editorplaceholder: 'Введите ответ...',
+    extraPlugins: 'autogrow',
+    autoGrow_minHeight: 200,
+    autoGrow_maxHeight: 600,
+    autoGrow_bottomSpace: 50,
+    removePlugins: 'resize',
+
 });
 let tg = window.Telegram.WebApp;
 
@@ -46,12 +54,12 @@ getOptions();
 function submitData() {
     const form = document.querySelector("#dataForm");
     const questionValue = document.getElementById("question").value;
-    const answerValue = CKEDITOR.instances.myeditor.getData();
+    const answerValue = CKEDITOR.instances.answer.getData();
     const selectOptionValue = document.getElementById("theme").value;
     const messageElement = document.getElementById("message");
 
     // Check if any of the fields are empty
-    if (!emailInputValue || !myeditorValue || !selectOptionValue) {
+    if (!questionValue || !answerValue || !selectOptionValue) {
         messageElement.textContent = "Please fill in all the fields.";
         return;
     }
@@ -85,7 +93,7 @@ function submitData() {
 
             // Очищаем значения элементов формы после успешной отправки данных
             form.reset();
-            CKEDITOR.instances.myeditor.setData(""); // Очищаем содержимое редактора
+            CKEDITOR.instances.answer.setData(""); // Очищаем содержимое редактора
             tg.close();
             // Очищаем список данных в selectOption
             const selectOption = document.getElementById("theme");
