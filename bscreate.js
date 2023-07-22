@@ -19,10 +19,12 @@ CKEDITOR.replace('answer', {
 let tg = window.Telegram.WebApp;
 
 // Функция для выполнения GET-запроса и заполнения данных в select
-function getOptions() {
-    const selectOption = document.getElementById("theme");
-    const apiUrl = "https://gazoblok-bukhara.uz/groups"; // URL вашего API
 
+
+// Function to populate the select element with options
+const getOptions = () => {
+    const selectOption = document.getElementById("theme");
+    const apiUrl = "https://gazoblok-bukhara.uz/groups";
     fetch(apiUrl, {
         method: "GET",
         headers: {
@@ -43,7 +45,7 @@ function getOptions() {
             });
         })
         .catch((error) => console.error("Error:", error));
-}
+};
 
 // Вызываем функцию getOptions() для получения данных перед отображением списка
 getOptions();
@@ -112,5 +114,71 @@ function submitData() {
 
 
 document.getElementById("sendData").addEventListener("click", submitData);
+
+
+
+const openpopup = (event) => {
+    event.preventDefault();
+    let popup = document.querySelector('.popup');
+    let closeButton = document.querySelector('.close-button');
+    popup.style.display = 'block';
+
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        popup.style.display = 'none';
+    });
+
+    const apiUrl = 'https://gazoblok-bukhara.uz/group';
+
+    const createGroup = (groupNameInput) => {
+        const createButton = document.getElementById('createButton');
+        createButton.disabled = true; // Disable the button to prevent multiple clicks
+
+        // Encode the group name to ensure it is properly formatted for URL
+        const encodedGroupName = encodeURIComponent(groupNameInput);
+
+        // Construct the URL with the "name" query parameter
+        const urlWithParams = `${apiUrl}?name=${encodedGroupName}`;
+
+        fetch(urlWithParams, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Use Content-Type for sending JSON data
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Ответ сервера:', data);
+
+                // Add the new group name as an option to the select element
+                const selectOption = document.getElementById("theme");
+                const option = document.createElement("option");
+                option.value = data.id; // Use the ID of the newly created group
+                option.textContent = data.name; // Use the name of the newly created group
+                selectOption.appendChild(option);
+
+                // Enable the button after group creation is complete
+                createButton.disabled = false;
+
+                // Close the popup after creating the group
+                let popup = document.querySelector('.popup');
+                popup.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                createButton.disabled = false; // Enable the button in case of an error
+            });
+    };
+
+    // Event handler for the "Создать" button inside the popup
+    const createButton = document.getElementById('createButton');
+    createButton.addEventListener('click', () => {
+        const groupNameInput = document.getElementById('groupNameInput').value;
+        createGroup(groupNameInput);
+    });
+};
+
+let button = document.querySelector('.button');
+button.addEventListener('click', openpopup);
 
 
