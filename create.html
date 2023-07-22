@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Q&A</title>
+</head>
+
+<body>
+    <main id="main">
+        <h1>Q&A</h1>
+        <br /><br />
+        <form id="dataForm">
+            <input type="text" name="question" placeholder="Вопрос" id="emailInput" />
+            <br /><br />
+            <textarea name="answer" placeholder="Ответ" id="myeditor" cols="30" rows="20"></textarea>
+            <br /><br />
+            <select name="group_id" id="selectOption"></select>
+            <br /><br />            
+            <br /><br />
+            <button type="button" id="submitBtn">Отправить</button>
+            <br /><br /><br />
+        </form>
+        <div id="resultContainer"></div>
+        <div id="message"></div>
+
+    </main>
+
+
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+
+    <script src="create.js"></script>
+
+    <script>
+        
+    </script>
+</body>
+
+</html>
